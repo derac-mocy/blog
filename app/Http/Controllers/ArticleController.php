@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Article;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
     public function index() {
-        $data = [
-            [ "id" => 1, "title" => "First Article"],
-            [ "id" => 2, "title" => "Second Article"],
-        ];
+        // $articles = DB::table('articles')->get();
+
+        $data = Article::all();
         return view('articles.index', ['articles' => $data]);
     }
 

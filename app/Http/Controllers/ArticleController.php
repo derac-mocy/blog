@@ -11,11 +11,43 @@ class ArticleController extends Controller
     public function index() {
         // $articles = DB::table('articles')->get();
 
-        $data = Article::all();
+        $data = Article::latest()->simplePaginate(5);
         return view('articles.index', ['articles' => $data]);
     }
 
     public function detail($id) {
-        return "Article Controller - Article Detail - $id";
+        $data = Article::find($id);
+
+        return view('articles.detail', ['article' => $data]);
+    }
+
+    public function add() {
+        $data = [
+            [ "id" => 1, "name" => "News" ],
+            [ "id" => 2, "name" => "Tech"],
+        ];
+
+        return view('articles.add', ['categories' => $data]);
+    }
+
+    public function create() {
+        // echo request()->category_id; die;
+        $validator = validator(request()->all(), [
+            'title' => 'required',
+            'body' => 'required',
+            'category_id' => 'required',
+        ]);
+        
+        if($validator->fails()) {
+            return back()->withErrors($validator);
+        }
+
+        $article = new Article;
+        $article->title = request()->title;
+        $article->body = request()->body;
+        $article->category_id = request()->category_id;
+        $article->save();
+
+        return redirect('/articles');
     }
 }
